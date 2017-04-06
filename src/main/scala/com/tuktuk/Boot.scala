@@ -27,10 +27,10 @@ object Boot extends App with WebServer with LogTracker {
   
   val mongoClient: MongoClient = MongoClient()
   
-  val database: MongoDatabase = mongoClient.getDatabase("local");
-  database.createCollection("drivers");
+  /* The expectation is that db 'tuktuk' exists with collection 'drivers'*/
+  val database: MongoDatabase = mongoClient.getDatabase("tuktuk");
   val driversCollection:MongoCollection[Document] = database.getCollection("drivers")
-  driversCollection.createIndex(Document("location"-> "2dsphere"))
+  driversCollection.createIndex(Document("location"-> "2dsphere")).toFuture()
   
   
   val bindingFuture = Http().bindAndHandle(compositeRoute(driversCollection), "localhost", 8080)
