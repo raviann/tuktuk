@@ -9,7 +9,6 @@ import com.tuktuk.server.WebServer;
 import scala.util.{Failure, Success}
 import akka.actor.Props
 import com.tuktuk.model._
-import com.tuktuk.GlobalActorSystem
 import org.mongodb.scala.MongoClient
 import org.mongodb.scala.MongoDatabase
 import org.mongodb.scala.MongoCollection
@@ -17,8 +16,9 @@ import org.mongodb.scala.bson.collection.immutable.Document
 import com.mongodb.connection.ClusterSettings
 import org.mongodb.scala.ServerAddress
 import org.mongodb.scala.MongoClientSettings
+import com.tuktuk.server.LogTracker
 
-object Boot extends App with WebServer {
+object Boot extends App with WebServer with LogTracker {
 
   implicit val system = GlobalActorSystem.actorSystem
   implicit val materializer = ActorMaterializer()
@@ -28,14 +28,12 @@ object Boot extends App with WebServer {
   val mongoClient: MongoClient = MongoClient()
   
   val database: MongoDatabase = mongoClient.getDatabase("local");
-  println(s"""name: ${database.name} - ${database.listCollectionNames()}""")
-  
   database.createCollection("drivers");
   val driversCollection:MongoCollection[Document] = database.getCollection("drivers")
   driversCollection.createIndex(Document("location"-> "2dsphere"))
   
   
-  val bindingFuture = Http().bindAndHandle(route(driversCollection), "localhost", 8080)
+  val bindingFuture = Http().bindAndHandle(compositeRoute(driversCollection), "localhost", 8080)
   
 
   bindingFuture.onComplete {

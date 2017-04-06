@@ -10,6 +10,7 @@ import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.server.Directives._
 import akka.actor.ActorSystem
+import akka.http.scaladsl.server
 import com.tuktuk.GlobalActorSystem
 
 import spray.json.DefaultJsonProtocol
@@ -32,7 +33,8 @@ import org.mongodb.scala.model.Updates._
 import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.UpdateOptions
 
-trait WebServer extends Directives {
+
+trait WebServer extends CompositeDirective with Directives {
   implicit val materializer: ActorMaterializer
   implicit val actorSystem = GlobalActorSystem.actorSystem
   implicit val ec: ExecutionContext = actorSystem.dispatcher
@@ -42,7 +44,12 @@ trait WebServer extends Directives {
   private lazy val getDriversPath = get & pathEndOrSingleSlash &
     parameters('latitude.as[Double], 'longitude.as[Double], 'radius.as[Int] ? 500, 'limit.as[Int] ? 10)
 
-  def route(implicit collection: MongoCollection[Document]) = pathPrefix("drivers") {
+ def compositeRoute(implicit collection: MongoCollection[Document]): server.Route = 
+   compositeDirective {
+    tutukRoute 
+  }   
+    
+  def tutukRoute(implicit collection: MongoCollection[Document]) =  pathPrefix("drivers") {
     updateDriverLocationPath {
     (driverId, driverLocation) => {
       println(s"Inside driver location path---${driverLocation}")
