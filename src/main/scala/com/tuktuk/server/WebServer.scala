@@ -34,7 +34,7 @@ import org.mongodb.scala.model.Aggregates._
 import org.mongodb.scala.model.UpdateOptions
 
 
-trait WebServer extends CompositeDirective with Directives {
+trait WebServer extends CompositeDirective with Directives with LogTracker {
   implicit val materializer: ActorMaterializer
   implicit val actorSystem = GlobalActorSystem.actorSystem
   implicit val ec: ExecutionContext = actorSystem.dispatcher
@@ -52,7 +52,7 @@ trait WebServer extends CompositeDirective with Directives {
   def tutukRoute(implicit collection: MongoCollection[Document]) =  pathPrefix("drivers") {
     updateDriverLocationPath {
     (driverId, driverLocation) => {
-      println(s"Inside driver location path---${driverLocation}")
+      info(s"Inside driver location path--${driverLocation}")
       val driverLoc = driverLocation.copy(driverId=Some(driverId))
       complete(updateLocation(driverLoc))
     }
@@ -67,7 +67,7 @@ trait WebServer extends CompositeDirective with Directives {
   }
 
   private def updateLocation(location: DriverLocation)(implicit collection: MongoCollection[Document]): Future[TotalDrivers] =  {
-    println("Before insertion into mongo")
+    info("Before updating location info into mongo")
     val observable = collection.replaceOne(equal("driverId", location.driverId.get),
         driverLocationToDocument(location),UpdateOptions().upsert(true) )
     val insertAndCount = for {
@@ -77,9 +77,9 @@ trait WebServer extends CompositeDirective with Directives {
     insertAndCount.toFuture().map(x =>TotalDrivers(x.seq.head))
   }
   
-  private def getNearestDrivers(criteria: SearchCriteria)(implicit collection: MongoCollection[Document]): Future[Seq[Driver]] = {
+  private def getNearestDrivers(criteria: SearchCriteria)(implicit collection: MongoCollection[Document]): Future[NearestDrivers] = {
     val observable = collection.aggregate(List(searchCriteriaToDocument(criteria))).toFuture()
     val drivers = observable.map(x => x.map(doc => documentToDriver(doc)))
-    drivers
+    drivers.map(x => NearestDrivers(Some(x)))
   }
 }
