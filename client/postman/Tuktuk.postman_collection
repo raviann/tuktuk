@@ -1,0 +1,48 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Tuktuk",
+		"_postman_id": "01e27660-6685-110e-0c4a-461a1036b00f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Update Location",
+			"request": {
+				"url": "http://localhost:8080/drivers/129/location",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\"latitude\": 12.97161923, \"longitude\": 108.59463452, \"accuracy\": 0.7\r}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Nearest tuktuks",
+			"request": {
+				"url": "http://localhost:8080/drivers?latitude=12.97161923&longitude=78.6&radius=600&limit=10",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
