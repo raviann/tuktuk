@@ -21,26 +21,41 @@ Would have preferred memsql + mysql (or) mysql ndb cluster, in any other alterna
 3. MongoDB should be downloaded from https://www.mongodb.com/download-center?jmp=docs&_ga=1.269111985.1379895954.1491210920#community and unzipped 
 
 # Installation and setup
-Setup Mongo
+## Setup Mongo
 1. Unzip the downloaded mongoDB zip, navigate to bin folder
-2. $ mongod --dbpath < some_location_where_data_to_be_kept >.  Refer to https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
+2. $ mongod --dbpath <some_location_where_data_to_be_kept>
+   Refer to https://docs.mongodb.com/manual/tutorial/manage-mongodb-processes/
    Mongo should be runing on port 27017 (default port). API server relies on this port 
 3. Create DBs and collections. In another shell, from 'bin' folder, run the following:
-   $ mongo 
-   > use tuktuk
-   > db.createCollection("drivers")
-   > use test
-   > db.createCollection("testDrivers") 
+   1. mongo 
+   2. use tuktuk
+   3. db.createCollection("drivers")
+   4. use test
+   5. db.createCollection("testDrivers") 
 
-Setup Server
-> git clone https://github.com/raviann/tuktuk.git
-> cd tuktuk
-> sbt run
-You should notice server running on port 8080. Ignore error messages due to Mongo cluster settings. Shall work on removing them later
+## Setup Server
+1. git clone https://github.com/raviann/tuktuk.git
+2. cd tuktuk
+3. sbt run
+
+You should notice server running on port 8080. 
+Ignore error messages due to Mongo cluster settings. Shall work on removing them later
 
 # Command to run the test cases
-> sbt test  (run from inside tuktuk directory being cloned)
+1.sbt test  (run from inside tuktuk directory being cloned)
+
 Ensure mongoDB is up and running before testcases are run. Ideally we can do with embedded mongoDB for UT, but not sure whether it supports spatial queries or not. This is like a spike
+
+# To test from Curl or Postman
+Kept the postman collection here: https://github.com/raviann/tuktuk/tree/master/client/postman. This can be imported to postman chrome plugin for REST API testing. Curl commands are kept at https://github.com/raviann/tuktuk/blob/master/client/curl.txt (these worked on mac)
+
+# Code flow
+Boot.scala -> WebServer.scala. object Boot is the main one and server port etc. can be changed here.
+WebServer.scala has the REST Apis and MongoDB calls. 'def compositeRoute' in WebServer.scala handles the REST API calls.
+
+The following line in Boot.scala links the REST APIs in WebServer.scala
+
+val bindingFuture = Http().bindAndHandle(compositeRoute(driversCollection), "localhost", 8080)
 
 # TODO:
 1. All exception handling cases are not covered with proper messages
