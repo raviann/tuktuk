@@ -52,7 +52,10 @@ Refer to repo: https://github.com/raviann/tutuk-performance/blob/master/README.m
 # To test from Curl or Postman
 Kept the postman collection here: https://github.com/raviann/tuktuk/tree/master/client/postman. This can be imported to postman chrome plugin for REST API testing. Curl commands are kept at https://github.com/raviann/tuktuk/blob/master/client/curl.txt (these worked on mac)
 
+### Update driver location
 ![Update Location](/design/images/updateLocation.png?raw=true "Update Location")
+
+### Nearest drivers
 ![Nearest Drivers](/design/images/nearestDrivers.png?raw=true "Nearest Drivers")
 
 # Code flow
