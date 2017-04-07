@@ -46,8 +46,14 @@ Ignore error messages due to Mongo cluster settings. Shall work on removing them
 
 Ensure mongoDB is up and running before testcases are run. Ideally we can do with embedded mongoDB for UT, but not sure whether it supports spatial queries or not. This is like a spike
 
+# Performance characterization
+Refer to repo: https://github.com/raviann/tutuk-performance/blob/master/README.md
+
 # To test from Curl or Postman
 Kept the postman collection here: https://github.com/raviann/tuktuk/tree/master/client/postman. This can be imported to postman chrome plugin for REST API testing. Curl commands are kept at https://github.com/raviann/tuktuk/blob/master/client/curl.txt (these worked on mac)
+
+![Update Location](/design/images/updateLocation.png?raw=true "Update Location")
+![Nearest Drivers](/design/images/nearestDrivers.png?raw=true "Nearest Drivers")
 
 # Code flow
 Boot.scala -> WebServer.scala. object Boot is the main one and server port etc. can be changed here.
